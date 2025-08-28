@@ -1,6 +1,3 @@
-Here’s a clean, combined `README.md` for both your **gesture keyboard** (`keyboard.py`) and **gesture mouse** (`mouse.py`) projects:
-
-````markdown
 # 🖐️ Virtual-Keyboard & Mouse (Hand-Gesture Controlled)
 
 A pair of Python tools that let you **type and control the cursor using hand gestures** captured from your webcam.  
@@ -10,9 +7,7 @@ A pair of Python tools that let you **type and control the cursor using hand ges
 Built with **OpenCV**, **MediaPipe**, **PyAutoGUI**, and (for Windows overlay) **pywin32**.
 
 ---
-
 ## ✨ Features
-
 ### Keyboard (keyboard.py)
 - 🎥 Real-time hand tracking (MediaPipe Hands).
 - ⌨️ Translucent, click-through **virtual keyboard overlay** (Windows).
@@ -27,7 +22,6 @@ Built with **OpenCV**, **MediaPipe**, **PyAutoGUI**, and (for Windows overlay) *
 - ⚡ Simple, responsive, and app-agnostic (system-level events).
 
 ---
-
 ## 🛠️ Tech Stack
 - **Python 3.8+**
 - [OpenCV](https://opencv.org/)
@@ -36,7 +30,6 @@ Built with **OpenCV**, **MediaPipe**, **PyAutoGUI**, and (for Windows overlay) *
 - [pywin32](https://github.com/mhammond/pywin32) *(keyboard overlay click-through on Windows)*
 
 ---
-
 ## 📦 Installation
 
 Clone the repo:
@@ -46,13 +39,11 @@ cd virtual-keyboard-overlay
 ````
 
 Install dependencies:
-
 ```bash
 pip install opencv-python mediapipe pyautogui pywin32
 ```
 
 > Tip: If you only need the **mouse** tool on macOS/Linux, you can skip `pywin32`.
-
 ---
 
 ## ▶️ Usage
