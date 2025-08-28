@@ -142,5 +142,3 @@ Behavior:
 
 ### 👤 Author
 **Talal-Ahmed01**
-Want me to drop this straight into a `README.md` file and add a tiny GIF section template for demos?
-```
