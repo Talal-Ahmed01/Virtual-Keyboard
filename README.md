@@ -1,23 +1,30 @@
-# Virtual-Keyboard
-A hand-gesture controlled virtual keyboard built with Python, OpenCV, and MediaPipe — type by pinching your fingers in the air with a translucent overlay on your screen.
+Here’s a clean, combined `README.md` for both your **gesture keyboard** (`keyboard.py`) and **gesture mouse** (`mouse.py`) projects:
 
-# 🖐️ Virtual Keyboard Overlay (Hand Gesture Controlled)
+````markdown
+# 🖐️ Virtual-Keyboard & Mouse (Hand-Gesture Controlled)
 
-This project implements a **virtual keyboard overlay** that you can interact with using **hand gestures** captured from your webcam. It uses **MediaPipe Hands** for landmark detection, **OpenCV** for rendering the overlay, and **PyAutoGUI** to send keypresses to your system.
+A pair of Python tools that let you **type and control the cursor using hand gestures** captured from your webcam.  
+- **keyboard.py** → On-screen translucent **virtual keyboard** you can press by **pinching** your thumb and index finger.  
+- **mouse.py** → **Mouse control** mapped to your index fingertip; **click** by bringing index and middle fingertips together.
 
-The project creates a translucent, click-through window showing a **virtual keyboard**, where you can type by pinching your **thumb** and **index finger** together over a key.
+Built with **OpenCV**, **MediaPipe**, **PyAutoGUI**, and (for Windows overlay) **pywin32**.
 
 ---
 
 ## ✨ Features
-- 🎥 **Real-time hand tracking** using [MediaPipe Hands](https://developers.google.com/mediapipe/solutions/vision/hand_landmarker).
-- ⌨️ **Virtual keyboard overlay** drawn with OpenCV.
-- ✋ **Pinch gesture detection** for keypresses.
-- 🖱️ **Click-through + always-on-top overlay** (Windows only).
-- 🔄 **Smooth pointer movement** with jitter reduction.
-- 🔠 Supports **Caps Lock**, **Shift**, and symbols (`! @ # $ % ^ ...`).
-- ⌫ **Backspace, Enter, Space** fully functional.
-- 🎮 Works with **any application** since keypresses are sent at system level.
+
+### Keyboard (keyboard.py)
+- 🎥 Real-time hand tracking (MediaPipe Hands).
+- ⌨️ Translucent, click-through **virtual keyboard overlay** (Windows).
+- 🤏 **Pinch to type** (thumb ↔ index).
+- 🔠 **Caps**, **Shift** (one-shot), symbols (`!@#$%^&*()_+{}|:"<>?`), ⌫ **Backspace**, **Enter**, **Space**.
+- 🔄 Jitter smoothing + **debounce/hysteresis** to avoid accidental keypresses.
+- 🖼️ Can run with **black background** (no camera feed on screen).
+
+### Mouse (mouse.py)
+- 🖱️ Cursor follows **index fingertip** (camera coords → screen coords).
+- 👆 **Click** by tapping **index** and **middle** fingertips together (distance threshold + cooldown).
+- ⚡ Simple, responsive, and app-agnostic (system-level events).
 
 ---
 
@@ -26,7 +33,7 @@ The project creates a translucent, click-through window showing a **virtual keyb
 - [OpenCV](https://opencv.org/)
 - [MediaPipe](https://developers.google.com/mediapipe)
 - [PyAutoGUI](https://pyautogui.readthedocs.io/en/latest/)
-- [pywin32](https://github.com/mhammond/pywin32) (for Windows overlay control)
+- [pywin32](https://github.com/mhammond/pywin32) *(keyboard overlay click-through on Windows)*
 
 ---
 
@@ -36,33 +43,104 @@ Clone the repo:
 ```bash
 git clone https://github.com/Talal-Ahmed01/virtual-keyboard-overlay.git
 cd virtual-keyboard-overlay
+````
+
+Install dependencies:
+
+```bash
+pip install opencv-python mediapipe pyautogui pywin32
 ```
 
-▶️ Usage
-Run the script:
-python virtual_keyboard.py
+> Tip: If you only need the **mouse** tool on macOS/Linux, you can skip `pywin32`.
+
+---
+
+## ▶️ Usage
+### 1) Virtual Keyboard
+
+Run:
+
+```bash
+python keyboard.py
+```
 
 Controls:
-Move your index finger over the virtual keyboard to highlight keys.
-Pinch thumb + index finger to "press" a key.
-Release pinch to reset.
-Press Esc to quit.
 
-⚙️ How It Works
-Camera Input
-Captures live video from your webcam (1280×720 for stable landmark detection).
-Hand Landmark Tracking
-MediaPipe Hands detects the 21 hand landmarks.
-Pointer & Pinch Detection
-Index fingertip acts as a cursor.
-Pinch (thumb ↔ index finger) triggers a keypress.
-Uses hysteresis + debounce for stable clicking.
+* Move **index finger** over a key.
+* **Pinch** (thumb ↔ index) to **press** the key.
+* **Caps** toggles case; **Shift** is one-shot (applies to next key).
+* **Esc** to quit.
 
-Keyboard Overlay
-Drawn with OpenCV as a translucent window.
-Keys mapped to actual system keypresses via PyAutoGUI.
+**Want a black background (no camera preview)?**
+Add:
 
-⚠️ Limitations
-Works only on Windows (overlay click-through via pywin32).
-Requires a good webcam & lighting for stable detection.
-Performance may vary depending on system specs.
+```python
+import numpy as np
+canvas = np.zeros((WIN_H, WIN_W, 3), dtype=np.uint8)
+```
+
+in place of where the camera frame is copied to `canvas`.
+(You can also comment out the fingertip `cv2.circle` to hide the pointer.)
+
+---
+
+### 2) Gesture Mouse
+
+Save your script as `mouse.py` and run:
+
+```bash
+python mouse.py
+```
+
+Behavior:
+
+* Cursor position = index fingertip.
+* **Click** when **index** and **middle** fingertips come within the `click_threshold`.
+* Adjustable:
+
+  * `click_threshold` (pixels, camera space)
+  * `click_cooldown` (seconds)
+* **Esc** to quit.
+
+---
+
+## ⚙️ How It Works
+
+**MediaPipe Hands** detects 21 landmarks per hand.
+
+* **Keyboard**: We scale and smooth the **index fingertip** position to overlay coordinates and use **pinch distance** (thumb ↔ index) with **hysteresis** to trigger a key. Keys are rendered with OpenCV and typed with PyAutoGUI.
+* **Mouse**: We map camera coordinates of the index fingertip to **screen coordinates** and send `moveTo`. A **click** occurs when the **index–middle** fingertip distance drops below a threshold (with cooldown to prevent spam).
+
+---
+## ⚠️ Limitations
+
+* The **keyboard overlay** window’s click-through + always-on-top is **Windows-only** (uses `pywin32`).
+* Proper lighting and a decent webcam help landmark stability.
+* Performance depends on system specs and camera resolution.
+
+---
+## 🔧 Troubleshooting
+
+* **No camera**: Ensure another app isn’t using the webcam.
+* **Laggy/unstable**: Reduce camera resolution or increase gesture thresholds.
+* **Wrong screen mapping** (mouse): Verify `cam_width/cam_height` align with your `VideoCapture` settings.
+
+---
+## 🚀 Roadmap Ideas
+
+* Cross-platform overlay click-through.
+* Multi-finger gestures (scroll, right-click, hotkeys).
+* Themeable keyboard + resizable layout.
+* Word suggestions / predictive typing.
+
+---
+## 🙌 Acknowledgements
+
+* [MediaPipe](https://developers.google.com/mediapipe)
+* [OpenCV](https://opencv.org/)
+* [PyAutoGUI](https://pyautogui.readthedocs.io/en/latest/)
+
+### 👤 Author
+**Talal-Ahmed01**
+Want me to drop this straight into a `README.md` file and add a tiny GIF section template for demos?
+```
